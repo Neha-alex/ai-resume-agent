@@ -1,12 +1,8 @@
 from pypdf import PdfReader
 
 def load_resume():
-    reader = PdfReader("data/resume.pdf")
-    resume = ""
-    for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            resume += text
+    with open("data/resume.txt", "r", encoding="utf-8") as f:
+        resume = f.read()
     return resume
 
 def load_summary():
