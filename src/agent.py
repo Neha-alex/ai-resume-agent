@@ -10,7 +10,9 @@ def chat(message, history):
     system_prompt = build_system_prompt()
     messages = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": message}]
     done = False
-    while not done:
+    max_iterations = 10  # Prevent infinite loops
+    iteration_count = 0
+    while not done and iteration_count < max_iterations:
         response = deepseek.chat.completions.create(model="deepseek-chat", messages=messages, tools = tools)
         finish_reason = response.choices[0].finish_reason
         if finish_reason == "tool_calls":
@@ -21,6 +23,9 @@ def chat(message, history):
             messages.extend(results)
         else:
             done = True 
+        iteration_count += 1
+    if iteration_count >= max_iterations:
+        print("Warning: Maximum iterations reached in chat loop", flush=True)
     return response.choices[0].message.content
 
 def handle_tool_calls(tool_calls):
